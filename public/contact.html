@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact PawPal</title>
+  <meta name="description" content="Contact the PawPal team about a pet, an application, fostering or volunteering.">
+  <meta name="theme-color" content="#221610">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=5">
+  <script src="js/api.js?v=5" defer></script>
+  <script src="js/ui.js?v=5" defer></script>
+  <script src="js/chat.js?v=5" defer></script>
+  <script src="js/pages/contact.js?v=5" defer></script>
+</head>
+<body data-layout="public" data-page="contact">
+<main id="main" tabindex="-1">
+<section class="page-hero"><div class="container">
+  <span class="eyebrow">We answer every message</span>
+  <h1 class="h1">Talk to the PawPal team</h1>
+  <p class="lead">Questions about an application, fostering, volunteering or PawPal itself — send a message and we'll reply, usually within one business day. For a specific pet, use “Ask the shelter” on their profile so it goes straight to their carers.</p>
+</div></section>
+<section class="section-sm"><div class="container" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;align-items:start" id="contactGrid">
+  <form class="card" id="contactForm" novalidate>
+    <div class="card-head"><h2>Send a message</h2></div>
+    <div class="card-body form-grid">
+      <div class="field"><label for="cName">Your name</label><input class="input" id="cName" autocomplete="name" maxlength="80" required></div>
+      <div class="field"><label for="cEmail">Email</label><input class="input" id="cEmail" type="email" autocomplete="email" required></div>
+      <div class="field full"><label for="cTopic">What is it about?</label><select class="select" id="cTopic"><option>An application I have lodged</option><option>Fostering</option><option>Volunteering</option><option>Surrendering a pet</option><option>Partnering as a shelter</option><option>Something else</option></select></div>
+      <div class="field full"><label for="cMsg">Message</label><textarea class="textarea" id="cMsg" maxlength="2000" required></textarea><span class="hint">Please don't include payment details.</span></div>
+      <div class="full" id="cMsgBox"></div>
+      <div class="full"><button class="btn btn-primary btn-lg" type="submit" id="cBtn"><span data-icon="send"></span>Send message</button></div>
+    </div>
+  </form>
+  <div class="stack" style="--stack:16px">
+    <div class="alert alert-warn"><span data-icon="alert"></span><div><b>Found an injured or stray animal?</b> Call your nearest shelter below, your local council, or a vet — don't wait for an email reply.</div></div>
+    <div id="shelterList" class="stack" style="--stack:12px"><div class="skeleton" style="height:140px"></div></div>
+  </div>
+</div></section>
+<style>@media (max-width:900px){#contactGrid{grid-template-columns:minmax(0,1fr)!important}}</style>
+</main>
+</body>
+</html>

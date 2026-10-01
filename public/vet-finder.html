@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find a vet near you — PawPal</title>
+  <meta name="description" content="Find veterinary clinics near you.">
+  <meta name="theme-color" content="#221610">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=5">
+  <script src="js/api.js?v=5" defer></script>
+  <script src="js/ui.js?v=5" defer></script>
+  <script src="js/chat.js?v=5" defer></script>
+  <script src="js/pages/vet-finder.js?v=5" defer></script>
+</head>
+<body data-layout="public" data-page="vets">
+<main id="main" tabindex="-1">
+<section class="page-hero"><div class="container">
+  <span class="eyebrow">Care after adoption</span><h1 class="h1">Find a vet near you</h1>
+  <p class="lead">A first check-up within two weeks of adoption is a great start. Search by suburb or use your location.</p>
+  <form class="nl-search" id="vetForm" style="margin-top:22px;max-width:760px"><div class="input-group"><span data-icon="pin"></span><label class="sr-only" for="vetQ">Suburb or postcode</label><input class="input" id="vetQ" placeholder="Suburb or postcode, e.g. Footscray" maxlength="100"></div>
+    <div class="row" style="flex-wrap:nowrap"><button class="btn btn-primary" type="submit">Search</button><button class="btn" type="button" id="nearMe"><span data-icon="pin"></span>Near me</button></div></form>
+</div></section>
+<section class="section-sm"><div class="container" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px" id="vetGrid">
+  <div id="vetList" class="stack" style="--stack:12px"><p class="muted">Search to see clinics.</p></div>
+  <div class="card" style="overflow:hidden;min-height:420px"><iframe id="vetMap" title="Map of veterinary clinics" style="width:100%;height:100%;min-height:420px;border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+</div></section>
+<style>@media (max-width:900px){#vetGrid{grid-template-columns:minmax(0,1fr)!important}}</style>
+</main>
+</body>
+</html>

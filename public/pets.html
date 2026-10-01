@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage pets — PawPal shelter portal</title>
+  <meta name="description" content="Manage your shelter's pet listings.">
+  <meta name="theme-color" content="#221610">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=5">
+  <script src="js/api.js?v=5" defer></script>
+  <script src="js/ui.js?v=5" defer></script>
+  <script src="js/pages/staff-pets.js?v=5" defer></script>
+</head>
+<body data-layout="staff" data-page="staff-pets">
+<main id="main" tabindex="-1">
+<div class="app-head"><div><h1>Pets</h1><p>Every listing your shelter manages. Changes go live immediately.</p></div><a class="btn btn-primary" href="add-pet.html"><span data-icon="plus"></span>Add a pet</a></div>
+<div class="tabs" role="tablist" id="statusTabs"></div>
+<div class="row-between" style="margin-bottom:16px"><div class="input-group" style="flex:1;max-width:420px"><span data-icon="search"></span><label class="sr-only" for="petQ">Search pets</label><input class="input" id="petQ" placeholder="Search by name, breed or location"></div><span class="small muted" id="petCount"></span></div>
+<div class="table-wrap"><table class="table table-cards"><thead><tr><th>Pet</th><th>Status</th><th>Details</th><th>Listed</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="petRows"><tr><td colspan="5"><div class="skeleton" style="height:48px"></div></td></tr></tbody></table></div>
+</main>
+</body>
+</html>

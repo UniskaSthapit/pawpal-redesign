@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Development mailbox — PawPal</title>
+  <meta name="description" content="Development-only view of emails and text messages.">
+  <meta name="theme-color" content="#221610">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=5">
+  <script src="js/api.js?v=5" defer></script>
+  <script src="js/ui.js?v=5" defer></script>
+  <script src="js/pages/dev-mailbox.js?v=5" defer></script>
+</head>
+<body data-layout="public" data-page="devmail">
+<main id="main" tabindex="-1">
+<section class="page-hero"><div class="container"><span class="badge badge-honey">Development only</span><h1 class="h1" style="margin-top:10px">Dev mailbox</h1>
+<p class="lead">No email or SMS provider is configured, so messages PawPal would send are shown here. This page is disabled in production and whenever real providers are configured.</p></div></section>
+<section class="section-sm"><div class="container" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:24px" id="mbGrid">
+  <div><div class="row" style="margin-bottom:12px"><input class="input" id="mbFilter" placeholder="Filter by recipient email"><button class="btn" id="mbRefresh">Refresh</button></div><div id="mbList" class="stack" style="--stack:8px"></div>
+  <h2 class="h3" style="margin:28px 0 12px">Text messages</h2><div id="smsList" class="stack" style="--stack:8px"></div></div>
+  <div class="card" style="overflow:hidden"><iframe id="mbView" title="Email preview" style="width:100%;min-height:640px;border:0;background:#fff" sandbox="allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe></div>
+</div></section>
+<style>@media (max-width:900px){#mbGrid{grid-template-columns:minmax(0,1fr)!important}}</style>
+</main>
+</body>
+</html>

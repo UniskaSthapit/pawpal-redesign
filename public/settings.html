@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings — PawPal shelter portal</title>
+  <meta name="description" content="Account, team and system settings.">
+  <meta name="theme-color" content="#221610">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=5">
+  <script src="js/api.js?v=5" defer></script>
+  <script src="js/ui.js?v=5" defer></script>
+  <script src="js/pages/settings.js?v=5" defer></script>
+</head>
+<body data-layout="staff" data-page="staff-settings">
+<main id="main" tabindex="-1">
+<div class="app-head"><div><h1>Settings</h1><p>Your account, your team and system status.</p></div></div>
+<div class="grid grid-2" style="align-items:start">
+  <form class="card" id="acctForm"><div class="card-head"><h2>Your account</h2><span id="roleBadge"></span></div><div class="card-body stack">
+    <div class="field"><label for="sName">Name</label><input class="input" id="sName" maxlength="80"></div>
+    <div class="field"><label for="sEmail">Email</label><input class="input" id="sEmail" disabled></div>
+    <button class="btn btn-primary" id="acctBtn">Save</button><div id="acctMsg"></div></div></form>
+  <form class="card" id="pwForm"><div class="card-head"><h2>Change password</h2></div><div class="card-body stack">
+    <div class="field"><label for="curPw">Current password</label><input class="input" type="password" id="curPw" autocomplete="current-password"></div>
+    <div class="field"><label for="newPw">New password</label><input class="input" type="password" id="newPw" autocomplete="new-password"><span class="hint">At least 8 characters with a letter and a number.</span></div>
+    <button class="btn" id="pwBtn">Update password</button><div id="pwMsg"></div></div></form>
+  <section class="card"><div class="card-head"><h2>Your shelter</h2></div><div class="card-body" id="shelterInfo"><div class="skeleton" style="height:80px"></div></div></section>
+  <section class="card"><div class="card-head"><h2>Team</h2><a class="small" id="manageUsers" href="admin.html" hidden>Manage users</a></div><div id="team"></div></section>
+  <section class="card" id="systemCard" hidden style="grid-column:1/-1"><div class="card-head"><h2>System status</h2></div><div class="card-body" id="system"></div></section>
+</div>
+</main>
+</body>
+</html>

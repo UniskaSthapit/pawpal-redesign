@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report animal cruelty — PawPal</title>
+  <meta name="description" content="How to report animal cruelty in Australia, what to include, warning signs, and what happens after you report.">
+  <meta name="theme-color" content="#221610">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=5">
+  <script src="js/api.js?v=5" defer></script>
+  <script src="js/ui.js?v=5" defer></script>
+  <script src="js/chat.js?v=5" defer></script>
+  <script src="js/pages/cruelty.js?v=5" defer></script>
+</head>
+<body data-layout="public" data-page="cruelty">
+<main id="main" tabindex="-1">
+<section class="page-hero"><div class="container">
+  <span class="eyebrow">Report · Prevent · Educate</span>
+  <h1 class="h1">Ending animal cruelty starts with someone <em>speaking up.</em></h1>
+  <p class="lead">Most cruelty isn't dramatic. It's a dog left in a yard with no shelter, a cat nobody has fed for a fortnight, too many animals in one house. If something looks wrong, report it — you don't need proof, and you don't need to be certain.</p>
+</div></section>
+<section class="section-sm"><div class="container grid grid-3">
+  <div class="card card-pad" style="border-color:#F2B8AE;background:#FFF7F5"><span class="badge badge-danger"><span data-icon="alert"></span>Emergency</span><h2 class="h3" style="margin-top:12px">An animal is in immediate danger</h2>
+    <p class="small" style="margin-top:8px">Locked in a hot car, being harmed, badly injured or unable to stand: call your state's RSPCA inspectorate or animal welfare authority now. If a person is at risk, call <b>000</b>. Don't break into a vehicle or property yourself.</p></div>
+  <div class="card card-pad"><span class="badge badge-honey">Non-urgent</span><h2 class="h3" style="margin-top:12px">Ongoing neglect or concern</h2>
+    <p class="small" style="margin-top:8px">Report to your state's animal welfare authority or local council. You can also send the details to PawPal below and our team will follow up with the right agency.</p></div>
+  <div class="card card-pad"><span class="badge badge-sage">Stray or lost</span><h2 class="h3" style="margin-top:12px">Found a stray animal?</h2>
+    <p class="small" style="margin-top:8px">Take it to a vet or council pound to be scanned for a microchip, or <a href="contact.html">contact your nearest PawPal shelter</a>.</p></div>
+</div></section>
+<section class="section-sm"><div class="container" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:32px;align-items:start" id="crueltyGrid">
+  <div class="prose">
+    <h2>What to include in a report</h2>
+    <ul><li>The exact address or location, and how to find the animal</li><li>What kind of animal, and how many</li><li>What you've seen, and when — dates and times help</li><li>Photos or video, if you can take them safely</li><li>Whether it's ongoing or a one-off</li></ul>
+    <h2>What counts as cruelty</h2>
+    <p>Cruelty isn't only deliberate violence. In every Australian state and territory, failing to provide an animal's basic needs — food, water, shelter and veterinary treatment — is an offence in its own right. Abandonment, keeping animals in unsuitable conditions and causing unnecessary pain are all covered. Laws differ between states, so check the legislation that applies where you live.</p>
+    <h2>What happens after you report</h2>
+    <p>People often hesitate because they don't know what they're setting in motion. Usually it's far less dramatic than they fear. An inspector assesses the report, may visit, and most cases end in advice, a direction to get veterinary treatment and a follow-up visit. Animals are only removed where there's no safe alternative.</p>
+    <h2>Warning signs</h2>
+    <ul><li>Very thin, limping or with untreated wounds</li><li>Kept constantly chained or confined with no shelter</li><li>No access to clean water</li><li>Heavily matted coat or overgrown nails</li><li>Many animals kept in unhygienic conditions</li></ul>
+  </div>
+  <form class="card" id="reportForm" novalidate>
+    <div class="card-head"><div><h2>Report a concern in writing</h2><p class="small muted">For non-urgent concerns. Your contact details are optional.</p></div></div>
+    <div class="card-body form-grid">
+      <div class="field full"><label for="rWhere">Where is the animal?</label><input class="input" id="rWhere" maxlength="200" placeholder="Street address, suburb or landmark" required></div>
+      <div class="field full"><label for="rType">Type of concern</label><select class="select" id="rType"><option>Neglect — food, water or shelter</option><option>Untreated injury or illness</option><option>Abandonment</option><option>Too many animals at one property</option><option>Physical harm</option><option>Animal left in a vehicle</option><option>Something else</option></select></div>
+      <div class="field full"><label for="rWhat">What have you seen?</label><textarea class="textarea" id="rWhat" maxlength="1500" required></textarea><span class="hint">Please don't enter anyone's full name or licence details.</span></div>
+      <div class="field"><label for="rName">Your name (optional)</label><input class="input" id="rName" maxlength="80" autocomplete="name"></div>
+      <div class="field"><label for="rEmail">Email (optional)</label><input class="input" id="rEmail" type="email" autocomplete="email"></div>
+      <div class="full" id="rMsg"></div>
+      <div class="full"><button class="btn btn-primary btn-lg" type="submit" id="rBtn">Send report to PawPal</button>
+        <p class="tiny muted" style="margin-top:10px">Reports go to the PawPal team, who pass them to the relevant authority. PawPal is not an enforcement agency — for emergencies, call your state inspectorate.</p></div>
+    </div>
+  </form>
+</div></section>
+<style>@media (max-width:900px){#crueltyGrid{grid-template-columns:minmax(0,1fr)!important}}</style>
+</main>
+</body>
+</html>
