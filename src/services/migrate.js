@@ -7,7 +7,15 @@ const config = require('../config');
 const { EXTRA_PETS } = require('./extra-pets');
 
 // v3: real contact email on shelters, and reptiles, birds, fish, hamsters and farm animals added to the catalogue
-const SCHEMA_VERSION = 3;
+// v4: every shelter has a staff login (demo), so enquiries and applications for any shelter reach a person
+const SCHEMA_VERSION = 4;
+
+// Demo staff for the shelters other than Melbourne (staff@pawpal.com). Same demo password; deactivated in production.
+const SHELTER_STAFF = [
+  { state: 'NSW', name: 'Sam Lee', email: 'sydney@pawpal.com' },
+  { state: 'QLD', name: 'Mia Chen', email: 'brisbane@pawpal.com' },
+  { state: 'WA', name: 'Tom Walker', email: 'perth@pawpal.com' },
+];
 
 const DEFAULT_SHELTERS = [
   { key: 'VIC', name: 'PawPal Melbourne Rescue Centre', suburb: 'Footscray', state: 'VIC', address: '14 Hopkins Street, Footscray VIC 3011',
@@ -85,6 +93,7 @@ async function migrate() {
     if (/@pawpal\.app$/i.test(s.email || '')) await db.update('shelters', s.id, { email: config.contactEmail });
   }
   await addExtraPets(shelters);
+  await ensureShelterStaff(shelters);
 
   if (meta) await db.update('meta', 'schema', { version: SCHEMA_VERSION, at: now() });
   else await db.insert('meta', { id: 'schema', version: SCHEMA_VERSION, at: now() });
@@ -107,4 +116,21 @@ async function addExtraPets(shelters, { createdBy = null } = {}) {
   return added;
 }
 
-module.exports = { migrate, addExtraPets, DEFAULT_SHELTERS, SCHEMA_VERSION, ensureShelters, shelterFor };
+// Creates a staff account for each shelter that has none (local/demo only — production uses real invitations)
+async function ensureShelterStaff(shelters, passwordHash) {
+  if (config.isProd) return 0;
+  const users = await db.find('users');
+  const bcrypt = require('bcryptjs');
+  const hash = passwordHash || await bcrypt.hash('Staff@123', 10);
+  let created = 0;
+  for (const s of SHELTER_STAFF) {
+    const shelter = shelters.find((x) => x.state === s.state);
+    if (!shelter || users.some((u) => u.email === s.email) || users.some((u) => u.role === 'staff' && u.shelterId === shelter.id)) continue;
+    await db.insert('users', { id: newId('user'), name: s.name, email: s.email, passwordHash: hash, role: 'staff', shelterId: shelter.id,
+      emailVerified: true, tokenVersion: 0, active: true, createdAt: now() });
+    created++;
+  }
+  return created;
+}
+
+module.exports = { migrate, addExtraPets, ensureShelterStaff, SHELTER_STAFF, DEFAULT_SHELTERS, SCHEMA_VERSION, ensureShelters, shelterFor };

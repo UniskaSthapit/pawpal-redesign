@@ -259,6 +259,48 @@ const mailFor = async (anon, email, type) => (await anon('GET', `/api/dev/emails
   check('Shelter replies to an enquiry', r.status === 200 && r.body.enquiry.status === 'Answered');
   r = await adopter('GET', '/api/enquiries/mine');
   check('Adopter sees the reply', r.body.enquiries.find((e) => e.id === enqId)?.reply.includes('copes well'));
+
+  console.log('\nShelter ↔ adopter conversations');
+  const perth = client();
+  r = await perth('POST', '/api/auth/login', { email: 'perth@pawpal.com', password: 'Staff@123', role: 'staff' });
+  check('Every shelter has its own staff login', r.status === 200);
+  r = await perth('GET', '/api/enquiries');
+  check('Perth staff see questions about Perth pets', r.body.enquiries.some((e) => e.id === enqId));
+  r = await adopter('POST', `/api/enquiries/${enqId}/messages`, { text: 'Thanks! Could I meet him this weekend?' });
+  check('Adopter can answer back in the same conversation', r.status === 200 && r.body.enquiry.status === 'Open' && r.body.enquiry.thread.length === 3);
+  r = await perth('GET', '/api/notifications');
+  check('Shelter staff are notified of the follow-up', r.body.notifications.some((n) => /replied about Max/.test(n.title)));
+  await perth('POST', `/api/enquiries/${enqId}/reply`, { reply: 'Of course — Saturday at 11 works.' });
+  r = await adopter('GET', '/api/enquiries/mine');
+  const conv = r.body.enquiries.find((e) => e.id === enqId);
+  check('The whole conversation reaches the adopter', conv.thread.length === 4 && conv.thread[3].from === 'staff');
+  r = await anon('POST', `/api/enquiries/${enqId}/messages`, { text: 'hijack attempt' });
+  check('Only the adopter can post in their conversation', r.status === 401 || r.status === 403);
+
+  r = await adopter('POST', '/api/contact', { name: 'Tester', email, topic: 'Fostering', message: 'Could I foster a dog over summer please?' });
+  r = await staff('GET', '/api/messages?status=Open');
+  const cm = (r.body.messages || []).find((m) => /foster a dog over summer/.test(m.message));
+  check('Contact messages appear in the shelter Inbox', Boolean(cm?.userId));
+  r = await staff('POST', `/api/messages/${cm.id}/reply`, { reply: 'Yes please — we will send you the foster form.' });
+  check('Staff can reply to a contact message', r.status === 200);
+  r = await adopter('GET', '/api/messages/mine');
+  check('The sender sees the reply on their dashboard', r.body.messages.some((m) => m.id === cm.id && m.thread.some((x) => x.from === 'staff')));
+  r = await adopter('POST', `/api/messages/${cm.id}/messages`, { text: 'Great, thank you!' });
+  check('The sender can answer back', r.status === 200 && r.body.item.status === 'Open');
+  r = await anon('GET', '/api/messages');
+  check('The Inbox is for shelter staff only', r.status === 401 || r.status === 403);
+  check('Contact replies are emailed', Boolean(await mailFor(anon, email, 'contact-reply')));
+
+  console.log('\nVet finder');
+  const maps = require('../src/services/maps');
+  if (!maps.mapsEnabled) {
+    maps.setFetch(async (url) => ({ ok: true, json: async () => (String(url).includes('nominatim') ? [{ lat: '-37.80', lon: '144.90', display_name: 'Footscray, Victoria' }]
+      : { elements: [{ type: 'node', id: 1, lat: -37.83, lon: 144.9, tags: { name: 'Far Vet' } }, { type: 'node', id: 2, lat: -37.801, lon: 144.901, tags: { name: 'Near Vet', phone: '03 9000 0000' } },
+        { type: 'way', id: 3, center: { lat: -37.81, lon: 144.91 }, tags: { name: 'Mid Vet' } }, { type: 'node', id: 4, lat: -37.8, lon: 144.9, tags: {} }] }) }));
+    r = await anon('GET', '/api/vets?q=Footscray');
+    check('Vet finder lists the nearest clinics first without an API key', r.body.source === 'openstreetmap' && r.body.results.length === 3
+      && r.body.results[0].name === 'Near Vet' && r.body.results.every((v, i, a) => !i || a[i - 1].distanceKm <= v.distanceKm) && /google\.com\/maps/.test(r.body.results[0].mapsUrl));
+  }
   r = await staff('POST', '/api/ai/describe', { name: 'Ziggy', breed: 'Staffy', type: 'Dog', age: 2, traits: 'loyal, playful', energyLevel: 3 });
   check('AI pet description is generated', r.status === 200 && r.body.description.includes('Ziggy'));
   r = await staff('POST', '/api/pets', { name: 'Ziggy', type: 'Dog', breed: 'Staffy', age: 2, description: 'A lovely dog', internalNotes: 'Secret note', status: 'Draft' });

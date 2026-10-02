@@ -7,14 +7,19 @@
   const hour = new Date().getHours();
   $('#hello').textContent = `${hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'}, ${u.name.split(' ')[0]}`;
 
-  const [appsR, favR, notesR, enqR, recoR, convR] = await Promise.allSettled([PawPalAPI.get('/applications/mine'), PawPalAPI.get('/favourites'),
-    PawPalAPI.get('/notifications', { limit: 6 }), PawPalAPI.get('/enquiries/mine'), PawPalAPI.get('/ai/recommendations', { limit: 4 }), PawPalAPI.get('/ai/conversations')]);
+  const [appsR, favR, notesR, enqR, recoR, convR, msgR] = await Promise.allSettled([PawPalAPI.get('/applications/mine'), PawPalAPI.get('/favourites'),
+    PawPalAPI.get('/notifications', { limit: 6 }), PawPalAPI.get('/enquiries/mine'), PawPalAPI.get('/ai/recommendations', { limit: 4 }), PawPalAPI.get('/ai/conversations'),
+    PawPalAPI.get('/messages/mine')]);
   const val = (r, fallback) => (r.status === 'fulfilled' ? r.value : fallback);
   const apps = val(appsR, { applications: [], flow: [] });
   const open = apps.applications.filter((a) => !['Adopted', 'Declined', 'Withdrawn'].includes(a.status));
   const favs = val(favR, { pets: [] }).pets;
   const notes = val(notesR, { notifications: [], unread: 0 });
   const enqs = val(enqR, { enquiries: [] }).enquiries;
+  const msgs = val(msgR, { messages: [] }).messages;
+  // A conversation "has a reply" when the latest message is from the shelter / PawPal team
+  const lastFrom = (c) => c.thread?.[c.thread.length - 1]?.from;
+  const replied = [...enqs, ...msgs].filter((c) => lastFrom(c) === 'staff' && c.status !== 'Closed').length;
 
   // Nudges: things that need the adopter's attention
   const nudges = [];
@@ -28,7 +33,7 @@
     ['my-applications.html', 'file', open.length, 'Active applications'],
     ['#favourites', 'heart', favs.length, 'Saved favourites'],
     ['notifications.html', 'bell', notes.unread, 'Unread notifications'],
-    ['#enquiries', 'message', enqs.filter((e) => e.status === 'Answered').length, 'Shelter replies'],
+    ['#enquiries', 'message', replied, 'Replies waiting for you'],
   ].map(([href, ic, n, label]) => `<a class="kpi" href="${href}"><div class="k-top"><span class="k-ic">${icons[ic]}</span></div><b>${n}</b><span>${label}</span></a>`).join('');
 
   // Applications with progress
@@ -70,13 +75,39 @@
     renderFavs(favList);
   });
 
-  $('#enqs').innerHTML = enqs.length ? enqs.map((e) => `<div class="list-row" style="align-items:flex-start">
-      <span class="thumb" style="display:grid;place-items:center;color:var(--muted)">${icons.message}</span>
-      <div class="grow"><div class="row-between"><b>${esc(e.petName)}</b><span class="badge ${e.status === 'Answered' ? 'badge-sage' : ''}">${esc(e.status)}</span></div>
-        <p class="small" style="margin-top:4px">${esc(e.message)}</p>
-        ${e.reply ? `<div class="thread-msg staff" style="margin-top:8px"><div class="who">Shelter reply<span>${esc(timeAgo(e.repliedAt))}</span></div><p>${esc(e.reply)}</p></div>` : `<span class="sub">Asked ${esc(timeAgo(e.at))} · awaiting reply</span>`}
-        <a class="small" href="pet-profile.html?id=${encodeURIComponent(e.petId)}">View ${esc(e.petName)}</a></div></div>`).join('')
-    : `<div class="card-body muted small">You haven't asked a shelter anything yet. Use "Ask the shelter" on any pet's profile.</div>`;
+  // Conversations with shelters (pet questions) and with the PawPal team (Contact page) — reply right here
+  const focus = PawPal.params.get('enquiry') || PawPal.params.get('message');
+  const convHTML = (c, kind) => {
+    const title = kind === 'enq' ? `About ${esc(c.petName)}` : `Message to PawPal · ${esc(c.topic)}`;
+    const waiting = lastFrom(c) !== 'staff';
+    return `<div class="list-row conv ${c.id === focus ? 'is-focus' : ''}" id="conv-${esc(c.id)}" style="align-items:flex-start">
+      <span class="thumb" style="color:var(--brand)">${kind === 'enq' ? icons.paw : icons.mail}</span>
+      <div class="grow" style="white-space:normal">
+        <div class="row-between"><b>${title}</b><span class="badge ${waiting ? '' : 'badge-sage'}">${c.status === 'Closed' ? 'Closed' : waiting ? 'Awaiting reply' : 'Replied'}</span></div>
+        <div class="msg-thread" style="margin-top:10px">${c.thread.map((m) => `<div class="thread-msg ${m.from === 'staff' ? 'staff' : ''}"><div class="who">${esc(m.from === 'staff' ? m.name : 'You')}<span>${esc(timeAgo(m.at))}</span></div><p>${esc(m.text)}</p></div>`).join('')}</div>
+        <form class="conv-reply" data-kind="${kind}" data-id="${esc(c.id)}"><label class="sr-only" for="cr-${esc(c.id)}">Reply</label>
+          <textarea class="textarea" id="cr-${esc(c.id)}" rows="1" maxlength="1500" placeholder="${waiting ? 'Add more detail…' : 'Write a reply…'}"></textarea>
+          <button class="btn btn-primary btn-sm" type="submit">${icons.send}Send</button></form>
+        ${kind === 'enq' ? `<a class="small" href="pet-profile.html?id=${encodeURIComponent(c.petId)}">View ${esc(c.petName)}</a>` : ''}</div></div>`;
+  };
+  const renderConvs = () => {
+    const all = [...enqs.map((c) => [c, 'enq']), ...msgs.map((c) => [c, 'msg'])].sort((a, b) => new Date(b[0].updatedAt) - new Date(a[0].updatedAt));
+    $('#enqs').innerHTML = all.length ? all.map(([c, kind]) => convHTML(c, kind)).join('')
+      : `<div class="card-body muted small">You haven't asked anything yet. Use "Ask the shelter" on any pet's profile, or <a href="contact.html">message the PawPal team</a>.</div>`;
+  };
+  renderConvs();
+  $('#enqs').addEventListener('submit', async (e) => {
+    const f = e.target.closest('.conv-reply'); if (!f) return;
+    e.preventDefault();
+    const text = f.querySelector('textarea').value.trim(); if (text.length < 2) return PawPal.toast('Write a message first.', 'error');
+    const btn = f.querySelector('button'); PawPal.setBusy(btn, true, 'Sending…');
+    try {
+      if (f.dataset.kind === 'enq') { const r = await PawPalAPI.post(`/enquiries/${encodeURIComponent(f.dataset.id)}/messages`, { text }); Object.assign(enqs.find((x) => x.id === f.dataset.id), r.enquiry); PawPal.toast(r.message); }
+      else { const r = await PawPalAPI.post(`/messages/${encodeURIComponent(f.dataset.id)}/messages`, { text }); Object.assign(msgs.find((x) => x.id === f.dataset.id), r.item); PawPal.toast(r.message); }
+      renderConvs();
+    } catch (err) { PawPal.setBusy(btn, false); PawPal.toast(err.message, 'error'); }
+  });
+  if (focus) setTimeout(() => $(`#conv-${CSS.escape(focus)}`)?.scrollIntoView({ block: 'center' }), 300);
 
   const convs = val(convR, { conversations: [] }).conversations;
   $('#convs').innerHTML = convs.length ? convs.slice(0, 6).map((c) => `<button class="list-row" data-conv="${esc(c.id)}" style="width:100%;border:0;background:none;text-align:left">

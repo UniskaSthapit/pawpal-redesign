@@ -117,7 +117,7 @@ const PawPalChat = (() => {
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-label', 'PawPal adoption assistant');
     panel.innerHTML = `
-      <div class="chat-head"><span class="ai-orb" style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#FFD48A,#E49B2F 45%,#C4452A);display:grid;place-items:center">${icons.sparkle}</span>
+      <div class="chat-head"><span class="ai-orb" style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#FFD66B,#F5B02E 45%,#CC4A0C);display:grid;place-items:center">${icons.sparkle}</span>
         <div><b>PawPal assistant</b><small>Answers from live PawPal data</small></div>
         <button class="icon-btn" data-chat-new aria-label="Start a new conversation" title="New conversation">${icons.refresh}</button>
         <button class="icon-btn" data-chat-close aria-label="Close assistant">${icons.close}</button></div>

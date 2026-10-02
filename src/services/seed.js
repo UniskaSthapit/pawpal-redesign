@@ -5,7 +5,7 @@ const db = require('../db');
 const { newId, now } = require('../utils');
 const { calculateSuitabilityScore } = require('./scoring');
 const { templateDescription } = require('./ai');
-const { DEFAULT_SHELTERS, SCHEMA_VERSION, shelterFor, addExtraPets } = require('./migrate');
+const { DEFAULT_SHELTERS, SCHEMA_VERSION, shelterFor, addExtraPets, ensureShelterStaff } = require('./migrate');
 const { parseProfile } = require('./matching');
 
 const img = (id, w = 1000, h = 800) => `https://images.unsplash.com/${id}?w=${w}&h=${h}&fit=crop&auto=format&q=80`;
@@ -131,6 +131,7 @@ async function seedIfEmpty({ force = false } = {}) {
     emailVerified: true, tokenVersion: 0, active: true, phone: '+61400123456', phoneVerified: false, createdAt: daysAgo(30),
     preferences: parseProfile(demoText, {}, ['Footscray, VIC']), preferencesText: demoText, preferencesAt: daysAgo(3) };
   for (const u of [admin, staff, demo]) await db.insert('users', u);
+  await ensureShelterStaff(shelters, staffHash); // Sydney, Brisbane and Perth staff logins
 
   const pets = PETS.map((p, i) => ({ id: newId('pet'), ...p, status: 'Available', description: templateDescription(p),
     shelterId: shelterFor(p.location, shelters).id, medicalHistory: MEDICAL[i % MEDICAL.length], rescueBackground: RESCUE[i % RESCUE.length],
@@ -182,6 +183,10 @@ async function seedIfEmpty({ force = false } = {}) {
       name: mine ? demo.name : ['Chris Allen', 'Mia Lopez', 'Tom Baker'][k - 2], email: mine ? demo.email : `enquirer${k}@example.com`, message, status, reply,
       repliedBy: reply ? staff.name : undefined, at: daysAgo(6 - k, 13), repliedAt: reply ? daysAgo(5 - k, 15) : null });
   }
+  // A message sent through the Contact page, waiting in the shelter portal Inbox
+  await db.insert('messages', { id: newId('msg'), name: 'Chris Allen', email: 'chris@example.com', topic: 'Fostering', status: 'Open', userId: null, at: daysAgo(1, 16),
+    message: 'Hi! We have a spare room and work from home. Could we foster a dog or a couple of kittens over the summer holidays?',
+    thread: [{ from: 'visitor', name: 'Chris Allen', text: 'Hi! We have a spare room and work from home. Could we foster a dog or a couple of kittens over the summer holidays?', at: daysAgo(1, 16) }] });
   for (const petIndex of [9, 15, 8]) await db.insert('favourites', { id: newId('fav'), userId: demo.id, petId: pets[petIndex].id, at: daysAgo(4) });
 
   // Eight weeks of searches, visits and profile views so analytics has history

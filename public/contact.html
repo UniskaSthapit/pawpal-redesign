@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contact PawPal</title>
   <meta name="description" content="Contact the PawPal team about a pet, an application, fostering or volunteering.">
-  <meta name="theme-color" content="#FBF6EE">
+  <meta name="theme-color" content="#FFFBF5">
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
-  <link rel="preload" href="fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/pawpal.css?v=6">
-  <script src="js/api.js?v=6" defer></script>
-  <script src="js/ui.js?v=6" defer></script>
-  <script src="js/chat.js?v=6" defer></script>
-  <script src="js/pages/contact.js?v=6" defer></script>
+  <link rel="preload" href="fonts/fredoka-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/pawpal.css?v=7">
+  <script src="js/api.js?v=7" defer></script>
+  <script src="js/ui.js?v=7" defer></script>
+  <script src="js/chat.js?v=7" defer></script>
+  <script src="js/pages/contact.js?v=7" defer></script>
 </head>
 <body data-layout="public" data-page="contact">
 <main id="main" tabindex="-1">
@@ -28,7 +28,7 @@
     <div class="card-body form-grid">
       <div class="field"><label for="cName">Your name</label><input class="input" id="cName" autocomplete="name" maxlength="80" required></div>
       <div class="field"><label for="cEmail">Email</label><input class="input" id="cEmail" type="email" autocomplete="email" required></div>
-      <div class="field full"><label for="cTopic">What is it about?</label><select class="select" id="cTopic"><option>An application I have lodged</option><option>Fostering</option><option>Volunteering</option><option>Surrendering a pet</option><option>Partnering as a shelter</option><option>Something else</option></select></div>
+      <div class="field full"><label for="cTopic">What is it about?</label><select class="select" id="cTopic"><option>General question</option><option>An application I have lodged</option><option>Fostering</option><option>Volunteering</option><option>Surrendering a pet</option><option>Partnering as a shelter</option><option>Something else</option></select></div>
       <div class="field full"><label for="cMsg">Message</label><textarea class="textarea" id="cMsg" maxlength="2000" required></textarea><span class="hint">Please don't include payment details.</span></div>
       <div class="full" id="cMsgBox"></div>
       <div class="full"><button class="btn btn-primary btn-lg" type="submit" id="cBtn"><span data-icon="send"></span>Send message</button></div>

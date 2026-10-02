@@ -8,6 +8,7 @@ const ai = require('../services/ai');
 const llm = require('../services/llm');
 const maps = require('../services/maps');
 const { sendMail, emailMode } = require('../services/mailer');
+const { notifyStaff } = require('../services/notify');
 const { smsMode } = require('../services/sms');
 const { seedIfEmpty } = require('../services/seed');
 const { sanitizeProfile, describeProfile, emptyProfile, AGE_BAND } = require('../services/matching');
@@ -270,13 +271,18 @@ router.post('/contact', contactLimiter, asyncHandler(async (req, res) => {
   const message = clean(req.body.message, 2000);
   const topic = clean(req.body.topic, 60);
   if (name.length < 2 || !isEmail(email) || message.length < 10) throw new HttpError(400, 'Please add your name, a valid email and a message of at least 10 characters.');
-  await db.insert('messages', { id: newId('msg'), name, email, topic, message, at: now() });
+  // Saved to the shelter portal Inbox; linked to the sender's account when they're signed in so replies reach their dashboard
+  const at = now();
+  const id = newId('msg');
+  await db.insert('messages', { id, name, email, topic, message, at, status: 'Open', userId: req.user?.id || null,
+    thread: [{ from: 'visitor', name, text: message, at }] });
+  await notifyStaff(null, { title: `New message from ${name}`, message: `${topic ? `${topic}: ` : ''}${message.slice(0, 110)}`, link: `enquiries.html?tab=messages&id=${id}` });
   const staff = (await db.find('users')).filter((u) => u.role === 'admin' && u.active !== false);
   for (const s of staff.slice(0, 5)) {
     sendMail({ to: s.email, type: 'contact', subject: `New message from ${name}${topic ? ` (${topic})` : ''}`, heading: 'New contact form message',
       body: `<p><b>${escapeHtml(name)}</b> (${escapeHtml(email)}) wrote:</p><p style="white-space:pre-wrap">${escapeHtml(message)}</p>` }).catch(() => {});
   }
-  res.json({ message: 'Thanks! Your message was sent to the PawPal team.' });
+  res.json({ message: req.user ? 'Thanks! Your message was sent to the PawPal team — replies will appear on your dashboard and by email.' : 'Thanks! Your message was sent to the PawPal team. We\'ll reply by email.' });
 }));
 
 // ================= VETS =================

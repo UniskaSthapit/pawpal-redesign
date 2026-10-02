@@ -38,7 +38,7 @@
         options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } } });
       const st = a.statusCounts.filter((x) => x.count);
       charts.status = new Chart($('#statusChart'), { type: 'doughnut', data: { labels: st.map((x) => x.status), datasets: [{ data: st.map((x) => x.count),
-        backgroundColor: ['#76614F', '#2D5E86', '#E49B2F', '#4F7CAC', '#7B5BA8', '#2E6A51', '#9A6FC8', '#221610', '#B42318', '#C9B8A6'] }] },
+        backgroundColor: ['#5B6878', '#17617C', '#F5B02E', '#3E9AC2', '#7B5BA8', '#22704F', '#E8641E', '#1E2B3A', '#B42318', '#C9D2DC'] }] },
         options: { maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } } } } });
     }
     try {

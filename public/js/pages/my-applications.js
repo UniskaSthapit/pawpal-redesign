@@ -72,7 +72,7 @@
           <div class="row" style="margin-top:10px"><a class="btn btn-sm" href="pet-profile.html?id=${encodeURIComponent(a.petId)}">View profile</a>
             <button class="btn btn-sm" data-ask="What's the status of my application for ${esc(a.petName)}?">${icons.sparkle}Ask PawPal</button></div></div></div></div>
 
-      ${a.status === 'Info Requested' ? `<div class="card card-pad" style="border-color:#E8C58F;background:#FFFBF3">
+      ${a.status === 'Info Requested' ? `<div class="card card-pad" style="border-color:#F7DD9C;background:#FFFCEF">
         <span class="src-label" style="color:var(--honey-ink)">${icons.alert}Action needed</span>
         <h3 style="font-size:20px;margin-top:6px">The shelter needs more information</h3>
         <p class="small muted" style="margin-top:4px">Reply below. Your application goes straight back into review once you send it.</p>

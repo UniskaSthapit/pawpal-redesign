@@ -76,7 +76,7 @@
         <div class="msg-thread">${(a.messages || []).length ? a.messages.map((m) => `<div class="thread-msg ${m.from === 'staff' ? 'staff' : ''}"><div class="who">${esc(m.from === 'staff' ? `${m.name} (staff)` : a.name)}<span>${esc(timeAgo(m.at))}</span></div><p>${esc(m.text)}</p></div>`).join('') : '<p class="small muted">No messages yet.</p>'}</div>
         <form id="msgForm" style="margin-top:12px;display:grid;grid-template-columns:1fr auto;gap:8px"><label class="sr-only" for="msgText">Message applicant</label><input class="input" id="msgText" maxlength="2000" placeholder="Message ${esc(a.name.split(' ')[0])} (they'll be emailed)"><button class="btn btn-dark" aria-label="Send">${icons.send}</button></form></div></div>
 
-      <div class="card" style="border-color:#E3CDBE;background:#FFFBF7"><div class="card-head"><div><span class="src-label" style="color:var(--brand-ink)">${icons.lock}Internal</span><h3>Private staff notes</h3></div></div><div class="card-body">
+      <div class="card" style="border-color:#F0D2BC;background:#FFF8F1"><div class="card-head"><div><span class="src-label" style="color:var(--brand-ink)">${icons.lock}Internal</span><h3>Private staff notes</h3></div></div><div class="card-body">
         <label class="sr-only" for="staffNotes">Private notes</label><textarea class="textarea" id="staffNotes" maxlength="3000" style="min-height:90px" placeholder="Only visible to shelter staff">${esc(a.staffNotes || '')}</textarea>
         <button class="btn btn-sm" id="notesBtn" style="margin-top:8px">Save notes</button></div></div>
 

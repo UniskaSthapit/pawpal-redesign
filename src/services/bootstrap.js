@@ -9,7 +9,8 @@ const config = require('../config');
 const { emails } = require('./mailer');
 const { newId, now, randomToken, hashToken, isEmail } = require('../utils');
 
-const DEMO_ACCOUNTS = [['admin@pawpal.com', 'Admin@123'], ['staff@pawpal.com', 'Staff@123'], ['user@pawpal.com', 'User@123']];
+const DEMO_ACCOUNTS = [['admin@pawpal.com', 'Admin@123'], ['staff@pawpal.com', 'Staff@123'], ['user@pawpal.com', 'User@123'],
+  ['sydney@pawpal.com', 'Staff@123'], ['brisbane@pawpal.com', 'Staff@123'], ['perth@pawpal.com', 'Staff@123']];
 
 async function ensureOwnerAdmin(email = config.adminEmail) {
   if (!email) return null;

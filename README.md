@@ -29,6 +29,7 @@ No database, email, SMS or AI keys are needed to try everything: PawPal uses a f
 These demo logins are for local use. In production they are deactivated automatically while they still use these
 passwords; set `ADMIN_EMAIL` to create your real administrator account.
 | Shelter staff (Melbourne) | `staff@pawpal.com` | `Staff@123` |
+| Shelter staff (Sydney / Brisbane / Perth) | `sydney@pawpal.com` / `brisbane@pawpal.com` / `perth@pawpal.com` | `Staff@123` |
 | Adopter | `user@pawpal.com` | `User@123` |
 
 ```bash
@@ -82,7 +83,9 @@ npm run seed       # wipe and reload the demo data
   rank among applicants, **AI summary**, status changes with appointment scheduling and a message (emailed),
   message thread, private staff notes, full history. Completing an adoption automatically closes and notifies the
   other applicants.
-- **Enquiries** — answer adopter questions (emailed + in-app) or close them.
+- **Inbox** — two tabs: *pet questions* (scoped to the staff member's shelter) and *contact messages* sent through the
+  Contact page (visible to all staff). Each is a conversation: staff reply, the adopter answers back from their dashboard,
+  and every message notifies and emails the other side. Counts and the notification bell refresh on their own.
 - **Analytics** — date range, KPIs with period-on-period change, weekly trends, adoption funnel (views → enquiries
   → applications → approved → adopted), interest by age/species/size, status mix, top and zero-result searches,
   CSV exports and **AI insights** generated only from those numbers.
@@ -112,7 +115,7 @@ shows which mode each service is in.
 | Email | `BREVO_API_KEY` (single verified sender, e.g. Gmail) **or** `RESEND_API_KEY` (own domain) **or** `SMTP_*` | Dev mailbox (local only) |
 | SMS | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` | Codes in dev mailbox locally; disabled in production |
 | AI | `GEMINI_API_KEY` (free tier) **or** `ANTHROPIC_API_KEY` **or** `OPENAI_API_KEY` | Rules engine on the same live data |
-| Maps | `GOOGLE_MAPS_API_KEY` | Keyless Google Maps embed |
+| Maps | `GOOGLE_MAPS_API_KEY` (Google Places list) | Nearest clinics from OpenStreetMap + keyless Google Maps embed |
 
 Existing databases are upgraded automatically on start (versioned migration): legacy statuses
 (Pending/Shortlisted/Visit Scheduled/Rejected) are mapped to the new workflow, shelters are created and assigned,
@@ -144,22 +147,23 @@ public/                   Vanilla HTML/CSS/JS (no build step)
   css/pawpal.css          The design system
   js/ui.js · chat.js      Shared layout, components, assistant widget
   js/pages/*.js           One script per page
-  fonts/                  Self-hosted Fraunces + Plus Jakarta Sans (OFL)
+  fonts/                  Self-hosted Fredoka + Nunito (OFL)
 scripts/                  smoke-test.js · ui-test.js · reset-data.js
 ```
 
 **Collections:** users, shelters, pets, images, applications (with history + messages), favourites, enquiries,
 notifications, conversations, matches, phoneCodes, emails, sms, searches, events, messages, meta.
 
-## Design system (v6 "Hearth")
+## Design system (v7 "Shelter")
 
-The interface is a premium redesign built on the same pages, scripts, API and data as before.
+The interface is built on the same pages, scripts, API and data as before.
 
-- **Palette** — cream paper, terracotta, soft brown, peach and honey gold, defined once as CSS tokens at the top of
-  `public/css/pawpal.css` (sage, sky and red are kept only for status meaning).
-- **Type** — Fraunces, used light and tightly tracked for headings with italic terracotta accents, and Plus Jakarta Sans
-  for the interface. Both are self-hosted, so the strict Content-Security-Policy is unchanged.
-- **Shape** — organic radii, pill controls, floating "island" sections, morphing blob shapes and soft, warm,
+- **Palette** — shelter orange for actions, teal-blue for trust and selected states, sunshine yellow for highlights, on
+  warm white with dark slate text. Defined once as CSS tokens at the top of `public/css/pawpal.css`; every text/background
+  pair meets WCAG AA (4.5:1). Sage, sky and red are kept for status meaning.
+- **Type** — Fredoka (friendly rounded headings, highlighted words get a hand-drawn yellow underline) and Nunito
+  (warm, very readable body text at 17px). Both are self-hosted, so the strict Content-Security-Policy is unchanged.
+- **Shape** — paw-print textures on tinted sections and the footer, organic radii, pill controls, floating "island" sections, morphing blob shapes and soft, warm,
   layered shadows.
 - **Motion** — a small vanilla toolkit in `public/js/ui.js` (no libraries):
   - `PawPal.reveal()`: staggered scroll reveals.

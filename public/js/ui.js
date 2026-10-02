@@ -406,7 +406,7 @@ const PawPal = (() => {
   // Dashboard sidebars
   const ADOPTER_SIDE = [['dashboard.html', 'grid', 'Overview'], ['my-applications.html', 'file', 'My applications'], ['dashboard.html#favourites', 'heart', 'Favourites'],
     ['ai-matching.html', 'sparkle', 'Find my PawPal'], ['notifications.html', 'bell', 'Notifications'], ['profile.html', 'user', 'Profile & preferences']];
-  const STAFF_SIDE = [['index.html', 'grid', 'Overview'], ['pets.html', 'paw', 'Pets'], ['applications.html', 'file', 'Applications', 'apps'], ['enquiries.html', 'message', 'Enquiries', 'enq'],
+  const STAFF_SIDE = [['index.html', 'grid', 'Overview'], ['pets.html', 'paw', 'Pets'], ['applications.html', 'file', 'Applications', 'apps'], ['enquiries.html', 'inbox', 'Inbox', 'enq'],
     ['analytics.html', 'chart', 'Analytics'], ['assistant.html', 'sparkle', 'AI assistant'], ['notifications.html', 'bell', 'Notifications'], ['settings.html', 'gear', 'Settings']];
 
   function renderShell(u) {
@@ -433,11 +433,18 @@ const PawPal = (() => {
         const s = shelters.find((x) => x.id === u?.shelterId);
         $('#sideShelter').innerHTML = s ? `<b>${esc(s.name)}</b><span class="muted">${esc(s.suburb)}, ${esc(s.state)}</span>` : `<b>All shelters</b><span class="muted">${u?.role === 'admin' ? 'Administrator view' : 'No shelter assigned'}</span>`;
       }).catch(() => {});
-      Promise.all([PawPalAPI.get('/applications', { status: 'Submitted', limit: 1 }), PawPalAPI.get('/enquiries', { status: 'Open' })]).then(([a, e]) => {
-        const set = (key, n) => { const el = $(`[data-count="${key}"]`); if (el && n) { el.hidden = false; el.textContent = n > 99 ? '99+' : n; } };
-        set('apps', a.total); set('enq', e.open);
-      }).catch(() => {});
+      refreshCounts();
     }
+  }
+
+  // Sidebar badges for the shelter portal: new applications and everything waiting in the Inbox
+  async function refreshCounts() {
+    if (!(layout === 'staff' || isStaffUser(user))) return;
+    try {
+      const [a, e, m] = await Promise.all([PawPalAPI.get('/applications', { status: 'Submitted', limit: 1 }), PawPalAPI.get('/enquiries', { status: 'Open' }), PawPalAPI.get('/messages', { status: 'Open' })]);
+      const set = (key, n) => { const el = $(`[data-count="${key}"]`); if (!el) return; el.hidden = !n; el.textContent = n > 99 ? '99+' : n; };
+      set('apps', a.total); set('enq', (e.open || 0) + (m.open || 0));
+    } catch { /* counts are a nice-to-have */ }
   }
 
   // ---------- notifications ----------
@@ -716,6 +723,8 @@ const PawPal = (() => {
     reveal();
     if (u) loadBell(false);
     fillContactLinks();
+    // Keep the bell (and portal badges) current without a reload, so new messages show up on their own
+    if (u) setInterval(() => { if (document.hidden) return; loadBell(!$('#bellPop')?.hidden); refreshCounts(); }, 45000);
     if (layout === 'public') cookieNotice();
     try {
       if (!sessionStorage.getItem('pp_visit') && layout === 'public') { sessionStorage.setItem('pp_visit', '1'); PawPalAPI.post('/events', { type: 'visit' }).catch(() => {}); }
@@ -726,5 +735,5 @@ const PawPal = (() => {
   return { $, $$, params, page, layout, esc, fmtDate, fmtDateTime, timeAgo, initials, ageText, ageLong, energyText, money, photo, sized, srcset, icons, icon, aiLabel,
     FALLBACK, PLACEHOLDER, statusBadge, statusClass, scoreBadge, toast, modal, confirm: confirmDialog, setBusy, errorHTML, emptyHTML, skeletonCards,
     favs, petCardHTML, petTags, ready, booted, get user() { return user; }, isStaffUser, logout, loadBell, noteHTML, hydrateIcons, reveal, reduceMotion,
-    finePointer, countUp, carousel, hscroll, accordion, siteConfig, fillContactLinks };
+    finePointer, countUp, carousel, hscroll, accordion, siteConfig, fillContactLinks, refreshCounts };
 })();

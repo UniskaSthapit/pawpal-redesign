@@ -60,6 +60,7 @@ app.use('/api/images', require('./src/routes/images'));
 app.use('/api/applications', require('./src/routes/applications'));
 app.use('/api/favourites', require('./src/routes/favourites'));
 app.use('/api/enquiries', require('./src/routes/enquiries'));
+app.use('/api/messages', require('./src/routes/messages'));
 app.use('/api/ai', require('./src/routes/ai'));
 app.use('/api/admin', require('./src/routes/admin'));
 app.use('/api', require('./src/routes/misc'));
@@ -115,10 +116,10 @@ async function start() {
     console.log(`   Email:    ${{ resend: 'Resend API', brevo: 'Brevo API', smtp: 'SMTP ' + config.smtp.host, dev: 'dev mailbox → ' + config.appUrl + '/dev-mailbox.html' }[emailMode]}${emailMode !== 'dev' ? ` (from ${config.mailFrom})` : ''}`);
     console.log(`   SMS:      ${{ twilio: 'Twilio', dev: 'dev SMS log → ' + config.appUrl + '/dev-mailbox.html', disabled: 'not configured (phone verification unavailable)' }[smsMode]}`);
     console.log(`   AI:       ${llm.providerLabel}`);
-    console.log(`   Maps:     ${config.mapsKey ? 'Google Places API' : 'keyless Google Maps embed'}`);
+    console.log(`   Maps:     ${config.mapsKey ? 'Google Places API' : 'OpenStreetMap clinic list + keyless Google Maps embed'}`);
     if (owner) console.log(`   Admin:    ${owner.user.email} — ${{ ok: 'administrator', promoted: 'promoted to administrator', created: `account created; set-password email ${owner.emailed ? 'sent' : 'NOT sent (check email settings, or use Forgot password)'}` }[owner.status]}`);
     if (disabledDemo.length) console.log(`   Security: deactivated demo accounts still using their published passwords: ${disabledDemo.join(', ')}`);
-    if (!config.isProd) console.log('   Demo logins → admin@pawpal.com / Admin@123 · staff@pawpal.com / Staff@123 · user@pawpal.com / User@123\n');
+    if (!config.isProd) console.log('   Demo logins → admin@pawpal.com / Admin@123 · staff@pawpal.com / Staff@123 (also sydney@, brisbane@, perth@pawpal.com) · user@pawpal.com / User@123\n');
   });
 }
 
